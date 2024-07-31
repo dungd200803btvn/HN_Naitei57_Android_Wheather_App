@@ -6,8 +6,7 @@ static def isLinux() {
     System.getProperty("os.name").toLowerCase().contains("linux")
 }
 
-static def isWindows() {
-    System.getProperty("os.name").toLowerCase().contains("window")
+static def isWindows() {System.getProperty("os.name").toLowerCase().contains("windows") // Corrected check
 }
 
 static def isMac() {
@@ -35,7 +34,12 @@ tasks.register('installGitHooks', Exec) {
     description = "Installs the pre-commit git hooks from team-props/git-hooks."
     group = "git hooks"
     workingDir = rootDir
-    commandLine "chmod", "-R", "+x", ".git/hooks/"
+    if (isWindows()) {
+        logger.lifecycle("Skipping chmod on Windows")
+        commandLine 'cmd', '/c', 'echo', "Git hooks installed (chmod skipped on Windows)" // Placeholder command
+    } else {
+        commandLine "chmod", "-R", "+x", ".git/hooks/"
+    }
     doLast {
         logger.info("Git hook installed successfully!")
     }
