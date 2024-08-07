@@ -1,0 +1,15 @@
+package com.example.sun.screen.home
+
+import com.example.sun.data.model.CurrentWeather
+
+interface HomeContract {
+    interface Presenter {
+        fun getCurrentWeather(city: String)
+    }
+
+    interface View {
+        fun onGetCurrentWeatherSuccess(currentWeather: CurrentWeather)
+
+        fun onError(e: String)
+    }
+}

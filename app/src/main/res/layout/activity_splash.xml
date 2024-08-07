@@ -8,7 +8,7 @@
     tools:context="com.example.sun.screen.SplashActivity">
 
     <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/welcomeLabel"
+        android:id="@+id/welcome_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/dp_100"
@@ -22,7 +22,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <com.airbnb.lottie.LottieAnimationView
-        android:id="@+id/animationView"
+        android:id="@+id/animation_view"
         android:layout_width="match_parent"
         android:layout_height="@dimen/dp_300"
         app:layout_constraintBottom_toBottomOf="parent"

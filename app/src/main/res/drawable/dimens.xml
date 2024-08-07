@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources >
     <dimen name="text_size_11">11sp</dimen>
     <dimen name="text_size_12">12sp</dimen>
     <dimen name="text_size_13">13sp</dimen>
@@ -56,14 +56,4 @@
     <dimen name="dp_250">250.00dp</dimen>
     <dimen name="dp_270">270.00dp</dimen>
     <dimen name="dp_460">460.00dp</dimen>
-    <dimen name="sp_34">34sp</dimen>
-    <dimen name="dp_300">300dp</dimen>
-    <dimen name="dp_48">48dp</dimen>
-    <dimen name="dp_12">12dp</dimen>
-    <dimen name="dp_52">52dp</dimen>
-    <dimen name="dp_3">3dp</dimen>
-    <dimen name="dp_2">2dp</dimen>
-    <dimen name="dp_92">92dp</dimen>
-    <dimen name="dp_28">28dp</dimen>
-
 </resources>
