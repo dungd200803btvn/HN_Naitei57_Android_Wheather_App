@@ -16,4 +16,12 @@ class CurrentWeatherRepository(
     ) {
         remote.getCurrentWeather(listener, city)
     }
+    companion object {
+        private var instance: CurrentWeatherRepository? = null
+
+        fun getInstance(
+            remote: CurrentWeatherDataSource.Remote,
+            local: CurrentWeatherDataSource.Local,
+        ) = instance ?: CurrentWeatherRepository(remote, local).also { instance = it }
+    }
 }
