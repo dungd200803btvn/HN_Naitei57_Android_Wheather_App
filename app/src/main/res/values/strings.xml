@@ -1,3 +1,7 @@
 <resources>
+
     <string name="app_name">Android-template</string>
+    <string name="splash_screen">Splash Screen</string>
+    <string name="hello_world">Hello World!</string>
+
 </resources>
