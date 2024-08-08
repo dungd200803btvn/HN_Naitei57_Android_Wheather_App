@@ -16,6 +16,15 @@ class CurrentWeatherRepository(
     ) {
         remote.getCurrentWeather(listener, city)
     }
+
+    override fun getCurrentLocationWeather(
+        listener: OnResultListener<CurrentWeather>,
+        lat: Double,
+        lon: Double,
+    ) {
+        remote.getCurrentLocationWeather(listener, lat, lon)
+    }
+
     companion object {
         private var instance: CurrentWeatherRepository? = null
 

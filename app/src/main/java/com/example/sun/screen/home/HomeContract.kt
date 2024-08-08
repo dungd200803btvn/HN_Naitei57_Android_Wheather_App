@@ -5,6 +5,11 @@ import com.example.sun.data.model.CurrentWeather
 interface HomeContract {
     interface Presenter {
         fun getCurrentWeather(city: String)
+
+        fun getCurrentLocationWeather(
+            latitude: Double,
+            longitude: Double,
+        )
     }
 
     interface View {
