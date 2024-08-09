@@ -9,27 +9,19 @@ import com.example.sun.data.model.CurrentWeather
 import com.example.sun.data.repository.source.CurrentWeatherRepository
 import com.example.sun.data.repository.source.local.LocalDataSourceImpl
 import com.example.sun.data.repository.source.remote.RemoteDataSourceImpl
-import com.example.sun.screen.LocationProvider
+import com.example.sun.screen.search.SearchFragment
 import com.example.sun.utils.base.BaseFragment
+import com.example.sun.utils.ext.replaceFragment
+import com.example.weather.R
 import com.example.weather.databinding.FragmentHomeBinding
 
 class HomeFragment : BaseFragment<FragmentHomeBinding>(), HomeContract.View {
     private var homePresenter: HomePresenter? = null
     private val myTag = "HomeFragment"
     private lateinit var data: CurrentWeather
-    private var locationProvider: LocationProvider? = null
 
     override fun inflateViewBinding(inflater: LayoutInflater): FragmentHomeBinding {
         return FragmentHomeBinding.inflate(inflater)
-    }
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        if (context is LocationProvider) {
-            locationProvider = context
-        } else {
-            throw RuntimeException("$context must implement LocationProvider")
-        }
     }
 
     override fun initData() {
@@ -41,31 +33,44 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), HomeContract.View {
                 ),
             )
         homePresenter?.setView(this)
-        homePresenter?.getCurrentWeather("Tokyo")
-    }
 
-    override fun initView() {
-        if (::data.isInitialized) {
-            viewBinding.tvLocation.text = "${data.nameCity}, ${data.sys.country}"
-            viewBinding.tvCurrentDay.text = data.day
-            viewBinding.tvCurrentTemperature.text = data.main.currentTemperature.toString()
-            viewBinding.tvCurrentText.text = data.weather[0].description
-            viewBinding.tvCurrentPercentCloud.text = data.wind.windSpeed.toString()
-            viewBinding.tvCurrentHumidity.text = data.main.humidity.toString()
-            viewBinding.tvCurrentPercentCloud1.text = data.clouds.percentCloud.toString()
-            Glide.with(this)
-                .load(data.iconWeather)
-                .into(viewBinding.ivCurrentWeather)
+        val sharedPref = requireContext().getSharedPreferences("location_prefs", Context.MODE_PRIVATE)
+        val latitude = sharedPref.getFloat("latitude", 0.0f).toDouble()
+        val longitude = sharedPref.getFloat("longitude", 0.0f).toDouble()
+        if (latitude != 0.0 && longitude != 0.0) {
+            homePresenter?.getCurrentLocationWeather(latitude, longitude)
+        } else {
+            if (::data.isInitialized) {
+                updateUIWithCurrentWeather(data)
+            }
+        }
+        viewBinding.tvLocation.setOnClickListener {
+            replaceFragment(R.id.fl_container, SearchFragment.newInstance(), true)
         }
         viewBinding.icLocation.setOnClickListener {
             getCurrentLocationWeather()
         }
     }
 
+    override fun initView() {
+    }
+
+    private fun updateUIWithCurrentWeather(currentWeather: CurrentWeather) {
+        viewBinding.tvLocation.text = "${currentWeather.nameCity}, ${currentWeather.sys.country}"
+        viewBinding.tvCurrentDay.text = currentWeather.day
+        viewBinding.tvCurrentTemperature.text = currentWeather.main.currentTemperature.toString()
+        viewBinding.tvCurrentText.text = currentWeather.weather[0].description
+        viewBinding.tvCurrentPercentCloud.text = currentWeather.wind.windSpeed.toString()
+        viewBinding.tvCurrentHumidity.text = currentWeather.main.humidity.toString()
+        viewBinding.tvCurrentPercentCloud1.text = currentWeather.clouds.percentCloud.toString()
+        Glide.with(this)
+            .load(currentWeather.iconWeather)
+            .into(viewBinding.ivCurrentWeather)
+    }
+
     override fun onGetCurrentWeatherSuccess(currentWeather: CurrentWeather) {
-        Log.v("myTag", currentWeather.toString())
         data = currentWeather
-        initView()
+        updateUIWithCurrentWeather(data)
     }
 
     override fun onError(e: String) {
@@ -79,15 +84,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), HomeContract.View {
     }
 
     private fun getCurrentLocationWeather() {
-        val location = locationProvider?.retrieveCurrentLocation()
-        if (location != null) {
-            val latitude = location.latitude
-            val longitude = location.longitude
-            Log.v(myTag, "Latitude: $latitude, Longitude: $longitude")
-            homePresenter?.getCurrentLocationWeather(latitude, longitude)
-        } else {
-            Toast.makeText(context, "Hãy bấm lại để cấp quyền vị trí", Toast.LENGTH_SHORT).show()
-        }
+        val sharedPref = context?.getSharedPreferences("current_location", Context.MODE_PRIVATE)
+        val latitude = sharedPref?.getString("latitude", "0.0")?.toDouble() ?: 0.0
+        val longitude = sharedPref?.getString("longitude", "0.0")?.toDouble() ?: 0.0
+        homePresenter?.getCurrentLocationWeather(latitude, longitude)
     }
 
     companion object {

@@ -22,5 +22,7 @@
     <string name="percent_cloud">Percent Cloud</string>
     <string name="speed_unit">m/s</string>
     <string name="percent">%</string>
-
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="my_map_api_key">AIzaSyA7Xo6jfheLpot-Fr4Gd8E1yUZyEQBhSYI</string>
 </resources>

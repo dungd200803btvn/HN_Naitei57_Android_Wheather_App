@@ -1,9 +1,9 @@
 package com.example.sun.screen
 
 import android.Manifest
+import android.content.Context
 import android.content.pm.PackageManager
 import android.location.Location
-import android.util.Log
 import android.view.LayoutInflater
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
@@ -13,17 +13,15 @@ import com.example.sun.utils.base.BaseActivity
 import com.example.weather.R
 import com.example.weather.databinding.ActivityMainBinding
 import com.google.android.gms.location.LocationServices
-import com.google.android.gms.tasks.OnSuccessListener
 import com.google.android.gms.tasks.Task
 
-class MainActivity : BaseActivity<ActivityMainBinding>(), LocationProvider {
-    var currentLocation: Location? = null
-
+class MainActivity : BaseActivity<ActivityMainBinding>() {
     override fun inflateBinding(layoutInflater: LayoutInflater): ActivityMainBinding {
         return ActivityMainBinding.inflate(layoutInflater)
     }
 
     override fun initView() {
+        requestLocation()
         setNextFragment(HomeFragment.newInstance())
         setNavigation()
     }
@@ -45,13 +43,6 @@ class MainActivity : BaseActivity<ActivityMainBinding>(), LocationProvider {
             .commit()
     }
 
-    override fun retrieveCurrentLocation(): Location? {
-        if (currentLocation == null) {
-            requestLocation()
-        }
-        return currentLocation
-    }
-
     private fun requestLocation() {
         if (ActivityCompat.checkSelfPermission(
                 this,
@@ -71,7 +62,6 @@ class MainActivity : BaseActivity<ActivityMainBinding>(), LocationProvider {
             )
         } else {
             getLastLocation()
-            Log.v("myTag1", "Location: ${currentLocation?.latitude}, ${currentLocation?.longitude}")
         }
     }
 
@@ -84,7 +74,11 @@ class MainActivity : BaseActivity<ActivityMainBinding>(), LocationProvider {
         if (requestCode == 1000 && grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             getLastLocation()
         } else {
-            Toast.makeText(this, "Permissions are required to fetch the location", Toast.LENGTH_SHORT).show()
+            Toast.makeText(
+                this,
+                "Permissions are required to fetch the location",
+                Toast.LENGTH_SHORT,
+            ).show()
             finish()
         }
     }
@@ -108,12 +102,17 @@ class MainActivity : BaseActivity<ActivityMainBinding>(), LocationProvider {
 
         val fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
         val locationTask: Task<Location> = fusedLocationProviderClient.lastLocation
-        locationTask.addOnSuccessListener(
-            OnSuccessListener<Location?> { location ->
-                if (location != null) {
-                    currentLocation = location
+        locationTask.addOnSuccessListener { location ->
+            if (location != null) {
+                val sharedPref = this.getSharedPreferences("current_location", Context.MODE_PRIVATE)
+                with(sharedPref.edit()) {
+                    putString("latitude", location.latitude.toString())
+                    putString("longitude", location.longitude.toString())
+                    apply()
                 }
-            },
-        )
+            } else {
+                Toast.makeText(this, "Location is null", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 }
