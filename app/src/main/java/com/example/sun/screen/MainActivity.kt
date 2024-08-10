@@ -106,8 +106,8 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
             if (location != null) {
                 val sharedPref = this.getSharedPreferences("current_location", Context.MODE_PRIVATE)
                 with(sharedPref.edit()) {
-                    putString("latitude", location.latitude.toString())
-                    putString("longitude", location.longitude.toString())
+                    putFloat("latitude", location.latitude.toFloat())
+                    putFloat("longitude", location.longitude.toFloat())
                     apply()
                 }
             } else {

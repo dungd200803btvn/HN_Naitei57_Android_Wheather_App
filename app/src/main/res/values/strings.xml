@@ -25,4 +25,9 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="my_map_api_key">AIzaSyA7Xo6jfheLpot-Fr4Gd8E1yUZyEQBhSYI</string>
+    <string name="city_name">City Name</string>
+    <string name="max_temp">Max Temp</string>
+    <string name="min_temp">Min Temp</string>
+    <string name="forecast_detail">Forecast Detail:</string>
+    <string name="back">Back</string>
 </resources>

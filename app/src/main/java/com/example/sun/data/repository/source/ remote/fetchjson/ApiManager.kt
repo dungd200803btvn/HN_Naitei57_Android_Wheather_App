@@ -2,7 +2,6 @@ package com.example.sun.data.repository.source.remote.fetchjson
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
-import com.example.sun.data.model.CurrentWeather
 import com.example.sun.data.repository.source.remote.OnResultListener
 import com.google.gson.Gson
 import java.io.BufferedReader
@@ -28,15 +27,16 @@ class ApiManager private constructor(private val threadPoolSize: Int) {
         return mExecutor
     }
 
-    fun executeApiCall(
+    fun <T> executeApiCall(
         urlString: String,
-        listener: OnResultListener<CurrentWeather>,
+        responseType: Class<T>,
+        listener: OnResultListener<T>,
     ) {
         getExecutor().submit {
             try {
                 val responseJson = getJsonStringFromUrl(urlString)
                 val gson = Gson()
-                val weather = gson.fromJson(responseJson, CurrentWeather::class.java)
+                val weather = gson.fromJson(responseJson, responseType)
                 mHandler.post {
                     listener.onSuccess(weather)
                 }

@@ -6,9 +6,10 @@ import android.view.LayoutInflater
 import android.widget.Toast
 import com.bumptech.glide.Glide
 import com.example.sun.data.model.CurrentWeather
-import com.example.sun.data.repository.source.CurrentWeatherRepository
+import com.example.sun.data.repository.WeatherRepository
 import com.example.sun.data.repository.source.local.LocalDataSourceImpl
 import com.example.sun.data.repository.source.remote.RemoteDataSourceImpl
+import com.example.sun.screen.detail.DetailFragment
 import com.example.sun.screen.search.SearchFragment
 import com.example.sun.utils.base.BaseFragment
 import com.example.sun.utils.ext.replaceFragment
@@ -19,6 +20,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), HomeContract.View {
     private var homePresenter: HomePresenter? = null
     private val myTag = "HomeFragment"
     private lateinit var data: CurrentWeather
+    private var latitude: Double = 0.0
+    private var longitude: Double = 0.0
 
     override fun inflateViewBinding(inflater: LayoutInflater): FragmentHomeBinding {
         return FragmentHomeBinding.inflate(inflater)
@@ -27,16 +30,13 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), HomeContract.View {
     override fun initData() {
         homePresenter =
             HomePresenter(
-                CurrentWeatherRepository.getInstance(
+                WeatherRepository.getInstance(
                     RemoteDataSourceImpl.getInstance(),
                     LocalDataSourceImpl.getInstance(),
                 ),
             )
         homePresenter?.setView(this)
-
-        val sharedPref = requireContext().getSharedPreferences("location_prefs", Context.MODE_PRIVATE)
-        val latitude = sharedPref.getFloat("latitude", 0.0f).toDouble()
-        val longitude = sharedPref.getFloat("longitude", 0.0f).toDouble()
+        loadLocationFromPreferences("location_prefs")
         if (latitude != 0.0 && longitude != 0.0) {
             homePresenter?.getCurrentLocationWeather(latitude, longitude)
         } else {
@@ -49,6 +49,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), HomeContract.View {
         }
         viewBinding.icLocation.setOnClickListener {
             getCurrentLocationWeather()
+        }
+        viewBinding.btnForecastReport.setOnClickListener {
+            saveLocationToPreferences(latitude, longitude)
+            replaceFragment(R.id.fl_container, DetailFragment.newInstance(), true)
         }
     }
 
@@ -84,10 +88,26 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), HomeContract.View {
     }
 
     private fun getCurrentLocationWeather() {
-        val sharedPref = context?.getSharedPreferences("current_location", Context.MODE_PRIVATE)
-        val latitude = sharedPref?.getString("latitude", "0.0")?.toDouble() ?: 0.0
-        val longitude = sharedPref?.getString("longitude", "0.0")?.toDouble() ?: 0.0
+        loadLocationFromPreferences("current_location")
         homePresenter?.getCurrentLocationWeather(latitude, longitude)
+    }
+
+    private fun loadLocationFromPreferences(key: String) {
+        val sharedPref = requireContext().getSharedPreferences(key, Context.MODE_PRIVATE)
+        latitude = sharedPref.getFloat("latitude", 0.0f).toDouble()
+        longitude = sharedPref.getFloat("longitude", 0.0f).toDouble()
+    }
+
+    private fun saveLocationToPreferences(
+        latitude: Double,
+        longitude: Double,
+    ) {
+        val sharedPref = requireContext().getSharedPreferences("home_fragment_prefs", Context.MODE_PRIVATE)
+        with(sharedPref.edit()) {
+            putFloat("latitude", latitude.toFloat())
+            putFloat("longitude", longitude.toFloat())
+            apply()
+        }
     }
 
     companion object {
