@@ -30,4 +30,7 @@
     <string name="min_temp">Min Temp</string>
     <string name="forecast_detail">Forecast Detail:</string>
     <string name="back">Back</string>
+    <string name="hanoi">Hanoi</string>
+    <string name="vietnam">VietNam</string>
+    <string name="favourite_cities">Favourite Cities</string>
 </resources>

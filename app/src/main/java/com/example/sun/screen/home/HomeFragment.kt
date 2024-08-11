@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.widget.Toast
 import com.bumptech.glide.Glide
 import com.example.sun.data.model.CurrentWeather
+import com.example.sun.data.model.FavouriteLocation
 import com.example.sun.data.repository.WeatherRepository
 import com.example.sun.data.repository.source.local.LocalDataSourceImpl
 import com.example.sun.data.repository.source.remote.RemoteDataSourceImpl
@@ -15,6 +16,7 @@ import com.example.sun.utils.base.BaseFragment
 import com.example.sun.utils.ext.replaceFragment
 import com.example.weather.R
 import com.example.weather.databinding.FragmentHomeBinding
+import com.google.gson.Gson
 
 class HomeFragment : BaseFragment<FragmentHomeBinding>(), HomeContract.View {
     private var homePresenter: HomePresenter? = null
@@ -53,6 +55,11 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), HomeContract.View {
         viewBinding.btnForecastReport.setOnClickListener {
             saveLocationToPreferences(latitude, longitude)
             replaceFragment(R.id.fl_container, DetailFragment.newInstance(), true)
+        }
+        viewBinding.btnAddFavourite.setOnClickListener {
+            val favouriteLocation = FavouriteLocation(data.nameCity, data.sys.country)
+            saveFavouriteLocation(requireContext(), favouriteLocation)
+            Toast.makeText(requireContext(), "Added to favourites", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -123,5 +130,43 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), HomeContract.View {
 
     companion object {
         fun newInstance() = HomeFragment()
+
+        fun saveFavouriteLocation(
+            context: Context,
+            favouriteLocation: FavouriteLocation,
+        ) {
+            val sharedPref = context.getSharedPreferences("favourite_locations", Context.MODE_PRIVATE)
+            val editor = sharedPref.edit()
+
+            val locations = getFavouriteLocations(context).toMutableList()
+            locations.add(favouriteLocation)
+
+            editor.putString("favourite_locations", Gson().toJson(locations))
+            editor.apply()
+        }
+
+        fun getFavouriteLocations(context: Context): List<FavouriteLocation> {
+            val sharedPref = context.getSharedPreferences("favourite_locations", Context.MODE_PRIVATE)
+            val json = sharedPref.getString("favourite_locations", "")
+            return if (json.isNullOrEmpty()) {
+                emptyList()
+            } else {
+                Gson().fromJson(json, Array<FavouriteLocation>::class.java).toList()
+            }
+        }
+
+        fun removeFavouriteLocation(
+            context: Context,
+            favouriteLocation: FavouriteLocation,
+        ) {
+            val sharedPref = context.getSharedPreferences("favourite_locations", Context.MODE_PRIVATE)
+            val editor = sharedPref.edit()
+
+            val locations = getFavouriteLocations(context).toMutableList()
+            locations.remove(favouriteLocation)
+
+            editor.putString("favourite_locations", Gson().toJson(locations))
+            editor.apply()
+        }
     }
 }

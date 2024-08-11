@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
+import com.example.sun.screen.favourite.FavouriteFragment
 import com.example.sun.screen.home.HomeFragment
 import com.example.sun.utils.base.BaseActivity
 import com.example.weather.R
@@ -30,6 +31,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
         viewBinding.bottomNavigation.setOnItemSelectedListener {
             when (it.itemId) {
                 R.id.mi_home -> setNextFragment(HomeFragment.newInstance())
+                R.id.mi_favorite -> setNextFragment(FavouriteFragment.newInstance())
             }
             true
         }

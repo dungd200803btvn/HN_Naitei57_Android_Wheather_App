@@ -101,4 +101,5 @@ data class DetailWeatherData(
     var minTemp: String = "",
     var iconWeather: String = "",
     var time: String = "",
+    var fulltime: String = "",
 )

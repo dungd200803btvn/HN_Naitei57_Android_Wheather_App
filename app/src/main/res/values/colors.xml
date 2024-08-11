@@ -8,5 +8,5 @@
     <color name="item_background_color">#FFFFFF</color>
     <color name="item_border_color">#FF9800</color>
     <color name="tv_day_color">#333333</color>
-
+    <color name="blue">#1E90FF</color>
 </resources>

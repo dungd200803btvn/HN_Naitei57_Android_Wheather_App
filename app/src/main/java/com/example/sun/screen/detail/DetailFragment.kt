@@ -2,12 +2,12 @@ package com.example.sun.screen.detail
 
 import android.content.Context
 import android.icu.text.SimpleDateFormat
+import android.os.Build
 import android.util.Log
 import android.view.LayoutInflater
 import android.widget.ImageButton
 import android.widget.Toast
-import androidx.core.content.ContextCompat
-import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.sun.data.model.DetailWeatherData
 import com.example.sun.data.model.Forecast1Day
@@ -20,6 +20,10 @@ import com.example.sun.utils.base.BaseFragment
 import com.example.sun.utils.base.Constant
 import com.example.weather.R
 import com.example.weather.databinding.FragmentDetailBinding
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
 import java.util.Locale
 
 class DetailFragment :
@@ -70,9 +74,6 @@ class DetailFragment :
             adapter = detailAdapter
             detailAdapter.registerItemRecyclerViewClickListener(this@DetailFragment)
         }
-        val dividerItemDecoration = DividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL)
-        dividerItemDecoration.setDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.custom_divider)!!)
-        viewBinding.listView.addItemDecoration(dividerItemDecoration)
     }
 
     private fun groupDataByDay(forecastList: List<Forecast1Day>): List<List<DetailWeatherData>> {
@@ -94,18 +95,49 @@ class DetailFragment :
             minTemp = forecastDay.main.tempMin.toString(),
             iconWeather = Constant.BASE_ICON_URL + forecastDay.weather[0].icon + "@2x.png",
             time = forecastDay.dtTxt.split(" ")[1],
+            fulltime = forecastDay.dtTxt,
         )
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onGetForecastDaySuccess(listForecastDay: ForecastDay) {
+        // Lấy ngày và giờ hiện tại từ hệ thống
+        val currentDate = LocalDate.now()
+        val currentTime = LocalTime.now()
+
         cityName = "Forecast Detail of City: " + listForecastDay.city.cityName + "," + listForecastDay.city.countryName
         viewBinding.tvToolbarTitle.text = cityName
+
+        // Lọc và nhóm các dự báo theo ngày, bỏ qua các ngày trước ngày hiện tại
         val groupedByDay =
-            listForecastDay.forecastList.chunked(8).map { dayForecast ->
-                dayForecast.map { toData(it) }
+            listForecastDay.forecastList
+                .filter { forecast ->
+                    val forecastDate = LocalDate.parse(forecast.dtTxt.split(" ")[0])
+                    !forecastDate.isBefore(currentDate)
+                }
+                .chunked(8)
+                .map { dayForecast ->
+                    dayForecast.map { toData(it) }
+                }
+
+        // Lọc và lấy các dự báo giờ, bỏ qua các giờ trước giờ hiện tại nếu nó là ngày hiện tại
+        val hourlyData =
+            groupedByDay.first().take(7).filter { hourlyForecast ->
+                val forecastDateTime = LocalDateTime.parse(hourlyForecast.fulltime, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
+                !forecastDateTime.toLocalDate().isEqual(currentDate) || !forecastDateTime.toLocalTime().isBefore(currentTime)
             }
-        hourlyAdapter.setData(groupedByDay.first().take(7).toMutableList())
-        val groupedData = groupDataByDay(listForecastDay.forecastList)
+
+        hourlyAdapter.setData(hourlyData.toMutableList())
+
+        // Nhóm dữ liệu theo ngày và set dữ liệu cho detailAdapter
+        val groupedData =
+            groupDataByDay(
+                listForecastDay.forecastList
+                    .filter { forecast ->
+                        val forecastDate = LocalDate.parse(forecast.dtTxt.split(" ")[0])
+                        !forecastDate.isBefore(currentDate)
+                    },
+            )
         detailAdapter.setData(groupedData)
     }
 
