@@ -1,6 +1,7 @@
 package com.example.sun.screen.detail
 
 import android.content.Context
+import android.icu.text.SimpleDateFormat
 import android.util.Log
 import android.view.LayoutInflater
 import android.widget.ImageButton
@@ -19,6 +20,7 @@ import com.example.sun.utils.base.BaseFragment
 import com.example.sun.utils.base.Constant
 import com.example.weather.R
 import com.example.weather.databinding.FragmentDetailBinding
+import java.util.Locale
 
 class DetailFragment :
     BaseFragment<FragmentDetailBinding>(),
@@ -28,6 +30,7 @@ class DetailFragment :
     private var cityName: String = ""
     private val myTag = "DetailFragment"
     private lateinit var detailAdapter: DetailAdapter
+    private lateinit var hourlyAdapter: HourlyAdapter
 
     override fun inflateViewBinding(inflater: LayoutInflater): FragmentDetailBinding {
         return FragmentDetailBinding.inflate(inflater)
@@ -46,12 +49,21 @@ class DetailFragment :
         val latitude = sharedPref.getFloat("latitude", 0.0f).toDouble()
         val longitude = sharedPref.getFloat("longitude", 0.0f).toDouble()
         detailPresenter?.getForecastDay(latitude, longitude)
+
         viewBinding.toolbar.findViewById<ImageButton>(R.id.btn_back).setOnClickListener {
             requireActivity().supportFragmentManager.popBackStack()
         }
     }
 
     override fun initView() {
+        // RecyclerView horizontal
+        hourlyAdapter = HourlyAdapter(mutableListOf())
+        viewBinding.recyclerViewHourly.apply {
+            layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+            adapter = hourlyAdapter
+        }
+
+        // RecyclerView vertical
         detailAdapter = DetailAdapter(mutableListOf())
         viewBinding.listView.apply {
             layoutManager = LinearLayoutManager(requireContext())
@@ -63,25 +75,38 @@ class DetailFragment :
         viewBinding.listView.addItemDecoration(dividerItemDecoration)
     }
 
+    private fun groupDataByDay(forecastList: List<Forecast1Day>): List<List<DetailWeatherData>> {
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+
+        return forecastList.groupBy { forecast ->
+            val date = dateFormat.parse(forecast.dtTxt)
+            dateFormat.format(date)
+        }.values.map { dayForecast ->
+            dayForecast.map { toData(it) }
+        }
+    }
+
     private fun toData(forecastDay: Forecast1Day): DetailWeatherData {
         return DetailWeatherData(
-            day = forecastDay.dtTxt,
+            day = forecastDay.dtTxt.split(" ")[0],
             status = forecastDay.weather[0].description,
             maxTemp = forecastDay.main.tempMax.toString(),
             minTemp = forecastDay.main.tempMin.toString(),
             iconWeather = Constant.BASE_ICON_URL + forecastDay.weather[0].icon + "@2x.png",
+            time = forecastDay.dtTxt.split(" ")[1],
         )
     }
 
     override fun onGetForecastDaySuccess(listForecastDay: ForecastDay) {
-        Log.v("LCD", "onGetForecastDaySuccess:" + listForecastDay.city.cityName + "," + listForecastDay.city.countryName)
         cityName = "Forecast Detail of City: " + listForecastDay.city.cityName + "," + listForecastDay.city.countryName
         viewBinding.tvToolbarTitle.text = cityName
-        val detailWeatherDataList: List<DetailWeatherData> =
-            listForecastDay.forecastList.map { forecastDay ->
-                toData(forecastDay)
+        val groupedByDay =
+            listForecastDay.forecastList.chunked(8).map { dayForecast ->
+                dayForecast.map { toData(it) }
             }
-        detailAdapter.setData(detailWeatherDataList.toMutableList())
+        hourlyAdapter.setData(groupedByDay.first().take(7).toMutableList())
+        val groupedData = groupDataByDay(listForecastDay.forecastList)
+        detailAdapter.setData(groupedData)
     }
 
     override fun onError(e: String) {

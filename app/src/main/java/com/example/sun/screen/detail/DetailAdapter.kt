@@ -10,10 +10,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.sun.data.model.DetailWeatherData
 import com.example.sun.utils.OnItemRecyclerViewClickListener
-import com.example.sun.utils.ext.notNull
 import com.example.weather.R
 
-class DetailAdapter(private var listForecastDay: MutableList<DetailWeatherData>) :
+class DetailAdapter(private var listForecastDay: MutableList<List<DetailWeatherData>>) :
     RecyclerView.Adapter<DetailAdapter.ViewHolder>() {
     private var onItemClickListener: OnItemRecyclerViewClickListener<DetailWeatherData>? = null
 
@@ -41,20 +40,12 @@ class DetailAdapter(private var listForecastDay: MutableList<DetailWeatherData>)
         onItemClickListener = onItemRecyclerViewClickListener
     }
 
-    fun updateData(forecastDays: MutableList<DetailWeatherData>?) {
-        forecastDays.notNull {
-            listForecastDay.clear()
-            listForecastDay = it
+    @SuppressLint("NotifyDataSetChanged")
+    fun setData(forecastDays: List<List<DetailWeatherData>>) {
+        forecastDays?.let {
+            this.listForecastDay = it.toMutableList()
             notifyDataSetChanged()
         }
-    }
-
-    @SuppressLint("NotifyDataSetChanged")
-    fun setData(forecastDays: MutableList<DetailWeatherData>?) {
-        if (forecastDays != null) {
-            this.listForecastDay = forecastDays
-        }
-        notifyDataSetChanged()
     }
 
     inner class ViewHolder(
@@ -66,8 +57,6 @@ class DetailAdapter(private var listForecastDay: MutableList<DetailWeatherData>)
         private var mTextViewMaxTemp: TextView? = null
         private var mTextViewMinTemp: TextView? = null
         private var mImageViewWeatherStatus: ImageView
-        private var mForecastDay: DetailWeatherData? = null
-        private var listener: OnItemRecyclerViewClickListener<DetailWeatherData>? = null
 
         init {
             mTextViewDay = itemView.findViewById(R.id.tv_day)
@@ -75,22 +64,20 @@ class DetailAdapter(private var listForecastDay: MutableList<DetailWeatherData>)
             mTextViewMaxTemp = itemView.findViewById(R.id.tv_max_temp)
             mTextViewMinTemp = itemView.findViewById(R.id.tv_min_temp)
             mImageViewWeatherStatus = itemView.findViewById(R.id.img_status)
-            listener = itemClickListener
             itemView.setOnClickListener {
-                listener?.onItemClick(mForecastDay)
+                itemClickListener?.onItemClick(listForecastDay[adapterPosition].first())
             }
         }
 
-        fun bindViewData(forecastDay: DetailWeatherData) {
+        fun bindViewData(forecastDay: List<DetailWeatherData>) {
             forecastDay.let {
-                mTextViewDay?.text = it.day
-                mTextViewStatus?.text = it.status
-                mTextViewMaxTemp?.text = it.maxTemp
-                mTextViewMinTemp?.text = it.minTemp
+                mTextViewMaxTemp?.text = it.maxByOrNull { data -> data.maxTemp.toFloat() }?.maxTemp
+                mTextViewMinTemp?.text = it.minByOrNull { data -> data.minTemp.toFloat() }?.minTemp
+                mTextViewDay?.text = it.maxByOrNull { data -> data.maxTemp.toFloat() }?.day
+                mTextViewStatus?.text = it.maxByOrNull { data -> data.maxTemp.toFloat() }?.status
                 Glide.with(itemView.context.applicationContext)
-                    .load(it.iconWeather)
+                    .load(it.maxByOrNull { data -> data.maxTemp.toFloat() }?.iconWeather)
                     .into(mImageViewWeatherStatus)
-                mForecastDay = it
             }
         }
     }

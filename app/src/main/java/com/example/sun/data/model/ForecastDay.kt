@@ -100,4 +100,5 @@ data class DetailWeatherData(
     var maxTemp: String = "",
     var minTemp: String = "",
     var iconWeather: String = "",
+    var time: String = "",
 )
