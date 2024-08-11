@@ -82,8 +82,8 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(), OnMapReadyCallback
                 val lng = marker.position.longitude
                 val sharedPref = requireContext().getSharedPreferences("location_prefs", Context.MODE_PRIVATE)
                 with(sharedPref.edit()) {
-                    putFloat("latitude", lat.toFloat())
-                    putFloat("longitude", lng.toFloat())
+                    putString("latitude1", lat.toString())
+                    putString("longitude1", lng.toString())
                     apply()
                 }
                 replaceFragment(R.id.fl_container, HomeFragment.newInstance(), true)

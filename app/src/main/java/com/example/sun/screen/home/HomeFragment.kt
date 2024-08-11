@@ -94,8 +94,19 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), HomeContract.View {
 
     private fun loadLocationFromPreferences(key: String) {
         val sharedPref = requireContext().getSharedPreferences(key, Context.MODE_PRIVATE)
-        latitude = sharedPref.getFloat("latitude", 0.0f).toDouble()
-        longitude = sharedPref.getFloat("longitude", 0.0f).toDouble()
+        val latitudeStr = sharedPref.getString("latitude1", null)
+        val longitudeStr = sharedPref.getString("longitude1", null)
+        if (!latitudeStr.isNullOrEmpty() && !longitudeStr.isNullOrEmpty()) {
+            try {
+                latitude = latitudeStr.toDouble()
+                longitude = longitudeStr.toDouble()
+                Log.v(myTag, "Du lieu kieu Double: latitude: $latitude, longitude: $longitude")
+            } catch (e: NumberFormatException) {
+                Log.e(myTag, "Lỗi chuyển đổi: ${e.message}")
+            }
+        } else {
+            Log.w(myTag, "Giá trị latitude hoặc longitude rỗng hoặc không tồn tại")
+        }
     }
 
     private fun saveLocationToPreferences(
