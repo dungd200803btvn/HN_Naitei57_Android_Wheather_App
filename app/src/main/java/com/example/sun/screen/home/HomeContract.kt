@@ -15,6 +15,8 @@ interface HomeContract {
     interface View {
         fun onGetCurrentWeatherSuccess(currentWeather: CurrentWeather)
 
+        fun onGetCurrentLocationWeatherSuccess(currentWeather: CurrentWeather)
+
         fun onError(e: String)
     }
 }

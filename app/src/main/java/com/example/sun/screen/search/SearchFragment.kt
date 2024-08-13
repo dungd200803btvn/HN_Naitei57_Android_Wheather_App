@@ -84,6 +84,7 @@ class SearchFragment : BaseFragment<FragmentSearchBinding>(), OnMapReadyCallback
                 with(sharedPref.edit()) {
                     putString("latitude1", lat.toString())
                     putString("longitude1", lng.toString())
+                    putString("city", viewBinding.mapSearch.query.toString())
                     apply()
                 }
                 replaceFragment(R.id.fl_container, HomeFragment.newInstance(), true)

@@ -24,6 +24,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), HomeContract.View {
     private lateinit var data: CurrentWeather
     private var latitude: Double = 0.0
     private var longitude: Double = 0.0
+    private var cityNameResultSearch: String = ""
 
     override fun inflateViewBinding(inflater: LayoutInflater): FragmentHomeBinding {
         return FragmentHomeBinding.inflate(inflater)
@@ -38,19 +39,29 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), HomeContract.View {
                 ),
             )
         homePresenter?.setView(this)
-        loadLocationFromPreferences("location_prefs")
-        if (latitude != 0.0 && longitude != 0.0) {
-            homePresenter?.getCurrentLocationWeather(latitude, longitude)
-        } else {
-            if (::data.isInitialized) {
-                updateUIWithCurrentWeather(data)
-            }
-        }
+        getCurrentLocationWeather()
+//        loadLocationFromPreferences("location_prefs")
+//        if (latitude != 0.0 && longitude != 0.0) {
+//            homePresenter?.getCurrentLocationWeather(latitude, longitude)
+//            homePresenter?.getCurrentWeather(cityNameResultSearch)
+//        } else {
+//            if (::data.isInitialized) {
+//                updateUIWithCurrentWeather(data)
+//            }
+//        }
         viewBinding.tvLocation.setOnClickListener {
             replaceFragment(R.id.fl_container, SearchFragment.newInstance(), true)
         }
         viewBinding.icLocation.setOnClickListener {
             getCurrentLocationWeather()
+        }
+        viewBinding.icArrowDown.setOnClickListener {
+            loadLocationFromPreferences("location_prefs")
+            if (latitude != 0.0 && longitude != 0.0) {
+//            homePresenter?.getCurrentLocationWeather(latitude, longitude)
+                Toast.makeText(requireContext(), "Search Result: $cityNameResultSearch", Toast.LENGTH_SHORT).show()
+                homePresenter?.getCurrentWeather(cityNameResultSearch)
+            }
         }
         viewBinding.btnForecastReport.setOnClickListener {
             saveLocationToPreferences(latitude, longitude)
@@ -84,6 +95,23 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), HomeContract.View {
         updateUIWithCurrentWeather(data)
     }
 
+    private fun saveWeatherDataToPreferences(currentWeather: CurrentWeather) {
+        val sharedPref = requireContext().getSharedPreferences("weather_prefs", Context.MODE_PRIVATE)
+        with(sharedPref.edit()) {
+            putString("cityName", currentWeather.nameCity)
+            putString("countryName", currentWeather.sys.country)
+            putString("description", currentWeather.weather[0].description)
+            putFloat("temperature", currentWeather.main.currentTemperature.toFloat())
+            apply()
+        }
+    }
+
+    override fun onGetCurrentLocationWeatherSuccess(currentWeather: CurrentWeather) {
+        data = currentWeather
+        updateUIWithCurrentWeather(data)
+        saveWeatherDataToPreferences(data)
+    }
+
     override fun onError(e: String) {
         Log.d(myTag, "onError: $e")
         Toast.makeText(context, "Lỗi: $e", Toast.LENGTH_SHORT).show()
@@ -107,6 +135,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), HomeContract.View {
             try {
                 latitude = latitudeStr.toDouble()
                 longitude = longitudeStr.toDouble()
+                if (key == "location_prefs") {
+                    cityNameResultSearch = sharedPref.getString("city", "") ?: ""
+                }
                 Log.v(myTag, "Du lieu kieu Double: latitude: $latitude, longitude: $longitude")
             } catch (e: NumberFormatException) {
                 Log.e(myTag, "Lỗi chuyển đổi: ${e.message}")
@@ -153,20 +184,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), HomeContract.View {
             } else {
                 Gson().fromJson(json, Array<FavouriteLocation>::class.java).toList()
             }
-        }
-
-        fun removeFavouriteLocation(
-            context: Context,
-            favouriteLocation: FavouriteLocation,
-        ) {
-            val sharedPref = context.getSharedPreferences("favourite_locations", Context.MODE_PRIVATE)
-            val editor = sharedPref.edit()
-
-            val locations = getFavouriteLocations(context).toMutableList()
-            locations.remove(favouriteLocation)
-
-            editor.putString("favourite_locations", Gson().toJson(locations))
-            editor.apply()
         }
     }
 }

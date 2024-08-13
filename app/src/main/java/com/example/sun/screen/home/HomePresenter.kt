@@ -12,6 +12,7 @@ class HomePresenter(
 ) : HomeContract.Presenter {
     private var view: HomeContract.View? = null
     private val handler = Handler(Looper.getMainLooper())
+    private val updateInterval = 60000L // 1 minute
 
     fun setView(view: HomeContract.View) {
         this.view = view
@@ -40,18 +41,30 @@ class HomePresenter(
         latitude: Double,
         longitude: Double,
     ) {
-        weatherRepository.getCurrentLocationWeather(
-            object : OnResultListener<CurrentWeather> {
-                override fun onSuccess(data: CurrentWeather) {
-                    view?.onGetCurrentWeatherSuccess(data)
-                }
+        val runnable =
+            object : Runnable {
+                override fun run() {
+                    weatherRepository.getCurrentLocationWeather(
+                        object : OnResultListener<CurrentWeather> {
+                            override fun onSuccess(data: CurrentWeather) {
+                                handler.post {
+                                    view?.onGetCurrentLocationWeatherSuccess(data)
+                                }
+                            }
 
-                override fun onError(exception: Exception?) {
-                    view?.onError(exception.toString())
+                            override fun onError(exception: Exception?) {
+                                handler.post {
+                                    view?.onError(exception.toString())
+                                }
+                            }
+                        },
+                        latitude,
+                        longitude,
+                    )
+                    handler.postDelayed(this, 60 * 1000) // 60 minutes in milliseconds
                 }
-            },
-            latitude,
-            longitude,
-        )
+            }
+
+        handler.post(runnable) // Start the initial execution
     }
 }
