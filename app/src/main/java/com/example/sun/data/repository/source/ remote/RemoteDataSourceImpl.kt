@@ -9,11 +9,12 @@ import java.util.Date
 import java.util.Locale
 
 class RemoteDataSourceImpl : CurrentWeatherDataSource.Remote {
+    private val apiManager: ApiManager = ApiManager.newInstance(threadPoolSize = 4)
+
     override fun getCurrentWeather(
         listener: OnResultListener<CurrentWeather>,
         city: String,
     ) {
-        val apiManager = ApiManager.newInstance(threadPoolSize = 4) // Example thread pool size
         val urlString = Constant.BASE_URL + "weather?q=$city&appid=${Constant.BASE_API_KEY}"
         apiManager.executeApiCall(
             urlString,
@@ -32,5 +33,11 @@ class RemoteDataSourceImpl : CurrentWeatherDataSource.Remote {
                 }
             },
         )
+    }
+
+    companion object {
+        private var instance: RemoteDataSourceImpl? = null
+
+        fun getInstance() = instance ?: RemoteDataSourceImpl().also { instance = it }
     }
 }
