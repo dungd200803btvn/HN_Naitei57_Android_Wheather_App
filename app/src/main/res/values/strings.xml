@@ -22,5 +22,6 @@
     <string name="percent_cloud">Percent Cloud</string>
     <string name="speed_unit">m/s</string>
     <string name="percent">%</string>
+    <string name="GOOGLE_API_KEY" translatable="false"> AIzaSyA7Xo6jfheLpot-Fr4Gd8E1yUZyEQBhSYI</string>
 
 </resources>

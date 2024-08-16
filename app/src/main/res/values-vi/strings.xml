@@ -1,0 +1,24 @@
+<resources>
+    <string name="app_name">Dự Báo Thời Tiết</string>
+    <string name="splash_screen">Màn Hình Chờ</string>
+    <string name="hello_world">Xin Chào Thế Giới!</string>
+    <string name="home">Trang Chủ</string>
+    <string name="setting">Cài Đặt</string>
+    <string name="favourite">Yêu Thích</string>
+    <string name="test_location">Hà Nội</string>
+    <string name="test_current_day">18 Tháng 7, 2024</string>
+    <string name="test_current_text">Trời Nắng</string>
+    <string name="test_current_temperature">30</string>
+    <string name="test_current_wind_speed">5.4</string>
+    <string name="test_current_humidity">83</string>
+    <string name="temperature">độ</string>
+    <string name="wind_speed">Tốc độ gió</string>
+    <string name="wind_speed_unit">km/h</string>
+    <string name="humidity">Độ ẩm</string>
+    <string name="humidity_unit">%</string>
+    <string name="line">|</string>
+    <string name="forecast_report">Báo Cáo Dự Báo</string>
+    <string name="percent_cloud">Phần Trăm Mây</string>
+    <string name="speed_unit">m/s</string>
+    <string name="percent">%</string>
+</resources>
