@@ -5,8 +5,11 @@ import com.example.weather.BuildConfig
 
 object Constant {
     const val BASE_URL = "https://api.openweathermap.org/data/2.5/"
+    const val PRO_URL = "https://pro.openweathermap.org/data/2.5/"
     val BASE_API_KEY: String
         get() = BuildConfig.BASE_API_KEY
+    val GOOGLE_MAP_API_KEY: String
+        get() = BuildConfig.GOOGLE_MAPS_API_KEY
     const val BASE_ICON_URL = "https://openweathermap.org/img/wn/"
     const val WEATHER_ENDPOINT = "weather"
     const val WEEKLY_FORECAST_ENDPOINT = "forecast/daily"
@@ -21,6 +24,7 @@ object Constant {
     const val FORECAST_DAY = 7
     const val FORECAST_HOUR = 24
 }
+
 object SharedPrefManager {
     private const val SHARE_PREFERENCES_NAME = "SHARE_PREFERENCES"
     private lateinit var sharedPreferences: SharedPreferences

@@ -3,14 +3,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/bg_fragment"
+    android:background="@drawable/bg_home_screen"
     tools:context="com.example.sun.screen.detail.DetailFragment">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="@color/bg_toolbar"
+        android:background="@drawable/bg_home_screen"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
         <ImageButton
@@ -26,25 +26,70 @@
             android:id="@+id/tv_toolbar_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/forecast_detail"
             android:gravity="center"
+            android:text="@string/forecast_detail"
             android:textColor="@android:color/white"
             android:textSize="@dimen/sp_20"
             android:textStyle="bold" />
 
     </androidx.appcompat.widget.Toolbar>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="@dimen/dp_16"
+        android:layout_marginBottom="@dimen/dp_8">
+
+        <TextView
+            android:id="@+id/tv_today_forecast"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="@dimen/dp_10"
+            android:gravity="start"
+            android:text="@string/today"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/sp_18"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tv_current_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="end"
+            android:layout_marginEnd="@dimen/dp_10"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/sp_14" />
+
+    </LinearLayout>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view_hourly"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/dp_8"
-        android:layout_marginBottom="@dimen/dp_8"/>
+        android:layout_marginBottom="@dimen/dp_8"
+        android:background="@drawable/bg_home_screen"/>
+
+    <TextView
+        android:id="@+id/tv_weekly_forecast"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dp_16"
+        android:layout_marginBottom="@dimen/dp_8"
+        android:gravity="end"
+        android:layout_marginEnd="@dimen/dp_10"
+        android:text="@string/weekly_forecast"
+        android:textColor="@android:color/white"
+        android:textSize="@dimen/sp_18"
+        android:textStyle="bold" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/list_view"
+        android:id="@+id/recyler_view_daily"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="@dimen/dp_3"/>
+        android:layout_marginTop="@dimen/dp_3"
+        android:background="@drawable/bg_home_screen"/>
 
 </LinearLayout>
