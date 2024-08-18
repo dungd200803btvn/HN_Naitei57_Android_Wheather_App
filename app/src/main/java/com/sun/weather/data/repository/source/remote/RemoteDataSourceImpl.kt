@@ -1,8 +1,8 @@
 package com.sun.weather.data.repository.source.remote
 
 import com.sun.weather.data.model.CurrentWeather
-import com.sun.weather.data.model.HourlyForcast
-import com.sun.weather.data.model.HourlyForcastItem
+import com.sun.weather.data.model.HourlyForecast
+import com.sun.weather.data.model.HourlyForecastItem
 import com.sun.weather.data.model.WeeklyForecast
 import com.sun.weather.data.model.WeeklyForecastItem
 import com.sun.weather.data.repository.source.WeatherDataSource
@@ -112,7 +112,7 @@ class RemoteDataSourceImpl : WeatherDataSource.Remote {
     }
 
     override fun getHourlyForecast(
-        listener: OnResultListener<HourlyForcast>,
+        listener: OnResultListener<HourlyForecast>,
         city: String,
     ) {
         val urlString =
@@ -121,9 +121,9 @@ class RemoteDataSourceImpl : WeatherDataSource.Remote {
                 "&${Constant.APPID_PARAM}=${Constant.BASE_API_KEY}"
         apiManager.executeApiCall(
             urlString,
-            HourlyForcast::class.java,
-            object : OnResultListener<HourlyForcast> {
-                override fun onSuccess(data: HourlyForcast) {
+            HourlyForecast::class.java,
+            object : OnResultListener<HourlyForecast> {
+                override fun onSuccess(data: HourlyForecast) {
                     val updatedForecastList = filterAndFormatHourlyForecast(data)
                     val updatedData = data.copy(forecastList = updatedForecastList)
                     listener.onSuccess(updatedData)
@@ -152,7 +152,7 @@ class RemoteDataSourceImpl : WeatherDataSource.Remote {
         }
     }
 
-    private fun filterAndFormatHourlyForecast(data: HourlyForcast): List<HourlyForcastItem> {
+    private fun filterAndFormatHourlyForecast(data: HourlyForecast): List<HourlyForecastItem> {
         val currentTime = System.currentTimeMillis()
         val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
 

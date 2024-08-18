@@ -6,12 +6,13 @@ import android.view.LayoutInflater
 import android.widget.ImageButton
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.sun.weather.R
-import com.sun.weather.data.model.HourlyForcast
+import com.sun.weather.data.model.HourlyForecast
 import com.sun.weather.data.model.WeeklyForecast
 import com.sun.weather.data.repository.source.WeatherRepository
 import com.sun.weather.data.repository.source.local.LocalDataSourceImpl
 import com.sun.weather.data.repository.source.remote.RemoteDataSourceImpl
 import com.sun.weather.databinding.FragmentDetailBinding
+import com.sun.weather.utils.NetworkHelper
 import com.sun.weather.utils.base.BaseFragment
 import com.sun.weather.utils.ext.goBackFragment
 import java.util.Date
@@ -21,6 +22,7 @@ class DetailFragment(private val cityName: String) : BaseFragment<FragmentDetail
     private var detailPresenter: DetailPresenter? = null
     private lateinit var dailyAdapter: DailyAdapter
     private lateinit var hourlyAdapter: HourlyAdapter
+    private var isNetworkAvailable = false
 
     override fun inflateViewBinding(inflater: LayoutInflater): FragmentDetailBinding {
         return FragmentDetailBinding.inflate(inflater)
@@ -35,8 +37,14 @@ class DetailFragment(private val cityName: String) : BaseFragment<FragmentDetail
                 ),
             )
         detailPresenter?.setView(this)
-        detailPresenter?.getWeeklyForecast(cityName)
-        detailPresenter?.getHourlyForecast(cityName)
+        isNetworkAvailable = NetworkHelper.isNetworkAvailable(requireContext())
+        if (isNetworkAvailable) {
+            detailPresenter?.getWeeklyForecast(cityName)
+            detailPresenter?.getHourlyForecast(cityName)
+        } else {
+            detailPresenter?.loadWeeklyForecastFromLocal(cityName)
+            detailPresenter?.loadHourlyForecastFromLocal(cityName)
+        }
         viewBinding.tvToolbarTitle.text =
             getString(R.string.city_name_app_bar, getString(R.string.forecast_detail), cityName)
         val currentDate = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(Date())
@@ -63,7 +71,7 @@ class DetailFragment(private val cityName: String) : BaseFragment<FragmentDetail
         dailyAdapter.updateData(listForecastDay.forecastList)
     }
 
-    override fun onGetHourlyForecastSuccess(listForecastHour: HourlyForcast) {
+    override fun onGetHourlyForecastSuccess(listForecastHour: HourlyForecast) {
         hourlyAdapter.updateData(listForecastHour.forecastList)
     }
 

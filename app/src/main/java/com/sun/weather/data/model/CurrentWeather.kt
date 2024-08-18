@@ -61,3 +61,17 @@ data class Sys(
     @SerializedName("country")
     var country: String,
 )
+
+object CurrentWeatherEntry {
+    private const val COLUMN_TEMP = "temp"
+    private const val COLUMN_HUMIDITY = "humidity"
+    private const val COLUMN_TEMP_MIN = "temp_min"
+    private const val COLUMN_TEMP_MAX = "temp_max"
+    private const val COLUMN_WEATHER_DESCRIPTION = "description"
+    private const val COLUMN_WIND_SPEED = "wind_speed"
+    private const val COLUMN_CLOUD_PERCENT = "cloud_percent"
+    private const val COLUMN_CITY_NAME = "city_name"
+    private const val COLUMN_COUNTRY_NAME = "country_name"
+    private const val COLUMN_DAY = "day"
+    private const val COLUMN_ICON_WEATHER = "icon_weather"
+}
