@@ -5,7 +5,7 @@
     android:id="@+id/splashScreen"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.sun.screen.SplashActivity">
+    tools:context="com.sun.weather.screen.SplashActivity">
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/text_welcome"
