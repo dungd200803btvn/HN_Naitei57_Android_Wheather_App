@@ -12,7 +12,10 @@ import com.example.sun.data.model.CurrentWeather
 import com.example.sun.data.repository.source.CurrentWeatherRepository
 import com.example.sun.data.repository.source.local.LocalDataSourceImpl
 import com.example.sun.data.repository.source.remote.RemoteDataSourceImpl
+import com.example.sun.screen.search.SearchFragment
 import com.example.sun.utils.base.BaseFragment
+import com.example.sun.utils.ext.replaceFragment
+import com.example.weather.R
 import com.example.weather.databinding.FragmentHomeBinding
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.tasks.Task
@@ -36,6 +39,13 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), HomeContract.View {
         homePresenter?.setView(this)
         viewBinding.icLocation.setOnClickListener {
             requestLocationAndFetchWeather()
+        }
+        viewBinding.tvLocation.setOnClickListener {
+            replaceFragment(R.id.fragment_container, SearchFragment.newInstance(), true)
+        }
+        viewBinding.icArrowDown.setOnClickListener {
+            val cityName = SharedPrefManager.getString("selected_location", "")
+            homePresenter?.getCurrentWeather(cityName!!)
         }
     }
 
@@ -88,6 +98,13 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), HomeContract.View {
     }
 
     override fun onGetCurrentWeatherSuccess(currentWeather: CurrentWeather) {
+        this.currentWeather = currentWeather
+        updateUIWithCurrentWeather(currentWeather)
+    }
+
+    override fun onGetCurrentLocationWeatherSuccess(currentWeather: CurrentWeather) {
+        this.currentWeather = currentWeather
+        updateUIWithCurrentWeather(currentWeather)
     }
 
     override fun onGetCurrentLocationWeatherSuccess(currentWeather: CurrentWeather) {
