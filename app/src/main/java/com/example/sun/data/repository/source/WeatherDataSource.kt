@@ -1,6 +1,7 @@
 package com.example.sun.data.repository.source
 
 import com.example.sun.data.model.CurrentWeather
+import com.example.sun.data.model.FavouriteLocation
 import com.example.sun.data.model.HourlyForcast
 import com.example.sun.data.model.WeeklyForecast
 import com.example.sun.data.repository.source.remote.OnResultListener
@@ -8,6 +9,14 @@ import com.example.sun.data.repository.source.remote.OnResultListener
 interface WeatherDataSource {
     interface Local {
         fun getSelectedLocation(key: String): String
+
+        fun getCurrentWeatherLocal(listener: OnResultListener<List<CurrentWeather>>)
+
+        fun insertFavoriteWeather(favouriteLocation: FavouriteLocation)
+
+        fun getAllFavorite(): List<FavouriteLocation>
+
+        fun removeFavoriteItem(id: Long)
     }
 
     interface Remote {

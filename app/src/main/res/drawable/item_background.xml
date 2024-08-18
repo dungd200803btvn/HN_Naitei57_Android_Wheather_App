@@ -7,4 +7,5 @@
     <stroke
         android:width="2dp"
         android:color="@color/item_border_color" />
+
 </shape>
