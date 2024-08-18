@@ -19,6 +19,7 @@ import com.sun.weather.screen.home.HomeFragment
 import com.sun.weather.screen.notification.WeatherNotificationReceiver
 import com.sun.weather.screen.notification.WeatherNotificationReceiver.Companion.DEFAULT_LATITUDE
 import com.sun.weather.screen.notification.WeatherNotificationReceiver.Companion.DEFAULT_LONGITUDE
+import com.sun.weather.screen.setting.SettingFragment
 import com.sun.weather.utils.base.BaseActivity
 
 class MainActivity : BaseActivity<ActivityMainBinding>() {
@@ -54,6 +55,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
             when (it.itemId) {
                 R.id.mi_home -> setNextFragment(HomeFragment.newInstance())
                 R.id.mi_favorite -> setNextFragment(FavouriteFragment.newInstance())
+                R.id.mi_setting -> setNextFragment(SettingFragment.newInstance())
             }
             true
         }
