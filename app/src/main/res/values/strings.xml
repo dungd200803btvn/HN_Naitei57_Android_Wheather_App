@@ -35,5 +35,9 @@
     <string name="city_name_app_bar" translatable="false">%1$s %2$s</string>
     <string name="today">Today</string>
     <string name="weekly_forecast">Weekly Forecast</string>
+    <string name="ha_noi" translatable="false">Hanoi</string>
+    <string name="viet_nam" translatable="false">VietNam</string>
+    <string name="favourite_cities">Favourite Cities</string>
+    <string name="heart_icon" translatable="false">heart icon</string>
 
 </resources>

@@ -12,6 +12,11 @@ interface HomeContract {
         )
 
         fun getSelectedLocation(key: String)
+
+        fun saveFavoriteLocation(
+            cityName: String,
+            countryName: String,
+        )
     }
 
     interface View {

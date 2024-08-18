@@ -1,6 +1,7 @@
 package com.example.sun.data.repository.source
 
 import com.example.sun.data.model.CurrentWeather
+import com.example.sun.data.model.FavouriteLocation
 import com.example.sun.data.model.HourlyForcast
 import com.example.sun.data.model.WeeklyForecast
 import com.example.sun.data.repository.source.remote.OnResultListener
@@ -9,6 +10,22 @@ class WeatherRepository(
     private val remote: WeatherDataSource.Remote,
     private val local: WeatherDataSource.Local,
 ) : WeatherDataSource.Local, WeatherDataSource.Remote {
+    override fun getCurrentWeatherLocal(listener: OnResultListener<List<CurrentWeather>>) {
+        local.getCurrentWeatherLocal(listener)
+    }
+
+    override fun insertFavoriteWeather(favouriteLocation: FavouriteLocation) {
+        local.insertFavoriteWeather(favouriteLocation)
+    }
+
+    override fun getAllFavorite(): List<FavouriteLocation> {
+        return local.getAllFavorite()
+    }
+
+    override fun removeFavoriteItem(id: Long) {
+        local.removeFavoriteItem(id)
+    }
+
     override fun getCurrentWeather(
         listener: OnResultListener<CurrentWeather>,
         city: String,

@@ -13,6 +13,7 @@ import com.example.sun.data.repository.source.WeatherRepository
 import com.example.sun.data.repository.source.local.LocalDataSourceImpl
 import com.example.sun.data.repository.source.remote.RemoteDataSourceImpl
 import com.example.sun.screen.detail.DetailFragment
+import com.example.sun.screen.favourite.FavouriteFragment
 import com.example.sun.screen.search.SearchFragment
 import com.example.sun.utils.base.BaseFragment
 import com.example.sun.utils.ext.replaceFragment
@@ -31,13 +32,14 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), HomeContract.View {
     }
 
     override fun initData() {
-        homePresenter =
-            HomePresenter(
+        val repository =
+            context?.let { context ->
                 WeatherRepository.getInstance(
                     RemoteDataSourceImpl.getInstance(),
-                    LocalDataSourceImpl.getInstance(),
-                ),
-            )
+                    LocalDataSourceImpl.getInstance(context),
+                )
+            }
+        homePresenter = repository?.let { HomePresenter(it) }
         homePresenter?.setView(this)
         requestLocationAndFetchWeather()
         viewBinding.icLocation.setOnClickListener {
@@ -49,8 +51,14 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), HomeContract.View {
         viewBinding.icArrowDown.setOnClickListener {
             homePresenter?.getSelectedLocation(SELECTED_LOCATION)
         }
+
         viewBinding.btnForecastReport.setOnClickListener {
             replaceFragment(R.id.fragment_container, DetailFragment.newInstance(cityName!!), true)
+        }
+        viewBinding.btnAddFavourite.setOnClickListener {
+            val countryName = currentWeather.sys.country
+            homePresenter?.saveFavoriteLocation(cityName!!, countryName)
+            replaceFragment(R.id.fragment_container, FavouriteFragment.newInstance(), true)
         }
     }
 

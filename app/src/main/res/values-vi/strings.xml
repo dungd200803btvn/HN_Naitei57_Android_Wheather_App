@@ -33,4 +33,6 @@
     <string name="back">Quay lại</string>
     <string name="today">Hôm nay</string>
     <string name="weekly_forecast">Dự báo tuần tới</string>
+    <string name="favourite_cities">Thành phố yêu thích</string>
+
 </resources>

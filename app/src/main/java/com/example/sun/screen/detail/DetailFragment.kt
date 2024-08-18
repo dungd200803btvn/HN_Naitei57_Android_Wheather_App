@@ -31,7 +31,7 @@ class DetailFragment(private val cityName: String) : BaseFragment<FragmentDetail
             DetailPresenter(
                 WeatherRepository.getInstance(
                     RemoteDataSourceImpl.getInstance(),
-                    LocalDataSourceImpl.getInstance(),
+                    LocalDataSourceImpl.getInstance(requireContext()),
                 ),
             )
         detailPresenter?.setView(this)
