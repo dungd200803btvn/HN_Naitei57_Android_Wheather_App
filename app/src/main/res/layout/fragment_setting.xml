@@ -1,0 +1,22 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:padding="@dimen/dp_16">
+
+    <ImageView
+        android:id="@+id/flag_image_view"
+        android:layout_width="@dimen/dp_100"
+        android:layout_height="@dimen/dp_100"
+        android:contentDescription="@string/image_flag"
+        android:src="@drawable/vn_flag"
+        android:layout_gravity="center"/>
+
+    <Button
+        android:id="@+id/language_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/change_language" />
+
+</LinearLayout>

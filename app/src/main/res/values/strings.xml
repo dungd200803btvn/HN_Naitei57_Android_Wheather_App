@@ -39,5 +39,9 @@
     <string name="viet_nam" translatable="false">VietNam</string>
     <string name="favourite_cities">Favourite Cities</string>
     <string name="heart_icon" translatable="false">heart icon</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="change_language">Chọn Ngôn Ngữ</string>
+    <string name="image_flag">image_flag</string>
 
 </resources>
