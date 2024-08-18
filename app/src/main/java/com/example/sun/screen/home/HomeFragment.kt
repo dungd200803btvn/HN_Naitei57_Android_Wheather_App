@@ -9,9 +9,10 @@ import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import com.bumptech.glide.Glide
 import com.example.sun.data.model.CurrentWeather
-import com.example.sun.data.repository.source.CurrentWeatherRepository
+import com.example.sun.data.repository.source.WeatherRepository
 import com.example.sun.data.repository.source.local.LocalDataSourceImpl
 import com.example.sun.data.repository.source.remote.RemoteDataSourceImpl
+import com.example.sun.screen.detail.DetailFragment
 import com.example.sun.screen.search.SearchFragment
 import com.example.sun.utils.base.BaseFragment
 import com.example.sun.utils.ext.replaceFragment
@@ -23,6 +24,7 @@ import com.google.android.gms.tasks.Task
 class HomeFragment : BaseFragment<FragmentHomeBinding>(), HomeContract.View {
     private var homePresenter: HomePresenter? = null
     private lateinit var currentWeather: CurrentWeather
+    private var cityName: String? = null
 
     override fun inflateViewBinding(inflater: LayoutInflater): FragmentHomeBinding {
         return FragmentHomeBinding.inflate(inflater)
@@ -31,7 +33,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), HomeContract.View {
     override fun initData() {
         homePresenter =
             HomePresenter(
-                CurrentWeatherRepository.getInstance(
+                WeatherRepository.getInstance(
                     RemoteDataSourceImpl.getInstance(),
                     LocalDataSourceImpl.getInstance(),
                 ),
@@ -44,8 +46,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), HomeContract.View {
             replaceFragment(R.id.fragment_container, SearchFragment.newInstance(), true)
         }
         viewBinding.icArrowDown.setOnClickListener {
-            val cityName = SharedPrefManager.getString("selected_location", "")
-            homePresenter?.getCurrentWeather(cityName!!)
+            homePresenter?.getSelectedLocation(SELECTED_LOCATION)
+        }
+        viewBinding.btnForecastReport.setOnClickListener {
+            replaceFragment(R.id.fragment_container, DetailFragment.newInstance(cityName!!), true)
         }
     }
 
@@ -80,10 +84,11 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), HomeContract.View {
     }
 
     private fun updateUIWithCurrentWeather(currentWeather: CurrentWeather) {
-        viewBinding.tvLocation.text = "${currentWeather.nameCity}, ${currentWeather.sys.country}"
+        viewBinding.tvLocation.text =
+            getString(R.string.city_name, currentWeather.nameCity, currentWeather.sys.country)
         viewBinding.tvCurrentDay.text = currentWeather.day
         viewBinding.tvCurrentTemperature.text = currentWeather.main.currentTemperature.toString()
-        if (!currentWeather.weathers.isEmpty()) {
+        if (currentWeather.weathers.isNotEmpty()) {
             viewBinding.tvCurrentText.text = currentWeather.weathers[0].description
         }
         viewBinding.tvCurrentPercentCloud.text = currentWeather.wind.windSpeed.toString()
@@ -98,23 +103,19 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), HomeContract.View {
     }
 
     override fun onGetCurrentWeatherSuccess(currentWeather: CurrentWeather) {
+        cityName = currentWeather.nameCity
         this.currentWeather = currentWeather
         updateUIWithCurrentWeather(currentWeather)
     }
 
     override fun onGetCurrentLocationWeatherSuccess(currentWeather: CurrentWeather) {
-        this.currentWeather = currentWeather
-        updateUIWithCurrentWeather(currentWeather)
-    }
-
-    override fun onGetCurrentLocationWeatherSuccess(currentWeather: CurrentWeather) {
+        cityName = currentWeather.nameCity
         this.currentWeather = currentWeather
         updateUIWithCurrentWeather(currentWeather)
     }
 
     override fun onError(e: String) {
         Log.d(MY_TAG, "onError: $e")
-        Toast.makeText(context, "Lỗi: $e", Toast.LENGTH_SHORT).show()
     }
 
     override fun onDestroy() {
@@ -125,6 +126,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), HomeContract.View {
     companion object {
         const val MY_TAG = "HomeFragment"
         const val REQUEST_CODE = 1000
+        const val SELECTED_LOCATION = "selected_location"
 
         fun newInstance() = HomeFragment()
     }

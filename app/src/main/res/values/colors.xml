@@ -4,4 +4,6 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="purple_500">#ced9ed</color>
+    <color name="bg_toolbar">#0000FF</color>
+    <color name="bg_fragment">#0963db</color>
 </resources>

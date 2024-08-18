@@ -1,13 +1,15 @@
 package com.example.sun.data.repository.source.remote
 import com.example.sun.data.model.CurrentWeather
-import com.example.sun.data.repository.source.CurrentWeatherDataSource
+import com.example.sun.data.model.HourlyForcast
+import com.example.sun.data.model.WeeklyForecast
+import com.example.sun.data.repository.source.WeatherDataSource
 import com.example.sun.data.repository.source.remote.fetchjson.ApiManager
 import com.example.sun.utils.base.Constant
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-class RemoteDataSourceImpl : CurrentWeatherDataSource.Remote {
+class RemoteDataSourceImpl : WeatherDataSource.Remote {
     private val apiManager: ApiManager = ApiManager.newInstance(threadPoolSize = 4)
 
     override fun getCurrentWeather(
@@ -24,10 +26,7 @@ class RemoteDataSourceImpl : CurrentWeatherDataSource.Remote {
             CurrentWeather::class.java,
             object : OnResultListener<CurrentWeather> {
                 override fun onSuccess(data: CurrentWeather) {
-                    val date = Date(data.dt * SECOND_TO_MILLIS)
-                    data.day = SimpleDateFormat(DATE_PATTERN, Locale.getDefault()).format(date)
-                    data.iconWeather = Constant.BASE_ICON_URL + data.weathers[0].iconWeather + "@2x.png"
-                    listener.onSuccess(data)
+                    handleCurrentWeatherSuccess(data, listener)
                 }
 
                 override fun onError(exception: Exception?) {
@@ -51,12 +50,7 @@ class RemoteDataSourceImpl : CurrentWeatherDataSource.Remote {
             CurrentWeather::class.java,
             object : OnResultListener<CurrentWeather> {
                 override fun onSuccess(data: CurrentWeather) {
-                    val date = Date(data.dt * SECOND_TO_MILLIS)
-                    data.day = SimpleDateFormat(DATE_PATTERN, Locale.getDefault()).format(date)
-                    if (data.weathers.isNotEmpty()) {
-                        data.iconWeather = Constant.BASE_ICON_URL + data.weathers[0].iconWeather + "@2x.png"
-                    }
-                    listener.onSuccess(data)
+                    handleCurrentWeatherSuccess(data, listener)
                 }
 
                 override fun onError(exception: Exception?) {
@@ -64,6 +58,49 @@ class RemoteDataSourceImpl : CurrentWeatherDataSource.Remote {
                 }
             },
         )
+    }
+
+    private fun handleCurrentWeatherSuccess(
+        data: CurrentWeather,
+        listener: OnResultListener<CurrentWeather>,
+    ) {
+        val formattedDate = formatDate(data.dt)
+        data.day = formattedDate
+        data.iconWeather = getIconUrl(data).toString()
+        listener.onSuccess(data)
+    }
+
+    private fun formatDate(timestamp: Long): String {
+        val date = Date(timestamp * SECOND_TO_MILLIS)
+        return SimpleDateFormat(DATE_PATTERN, Locale.getDefault()).format(date)
+    }
+
+    private fun getIconUrl(data: CurrentWeather): String? {
+        return if (data.weathers.isNotEmpty()) {
+            Constant.BASE_ICON_URL + data.weathers[0].iconWeather + "@2x.png"
+        } else {
+            null
+        }
+    }
+
+    override fun getWeeklyForecast(
+        listener: OnResultListener<WeeklyForecast>,
+        city: String,
+    ) {
+        val urlString =
+            "${Constant.BASE_URL}${Constant.WEEKLY_FORECAST_ENDPOINT}?${Constant.QUERY_PARAM}=$city" +
+                "&${Constant.UNITS_PARAM}=${Constant.UNITS_VALUE}&${Constant.CNT_PARAM}=${Constant.FORECAST_DAY}" +
+                "&${Constant.APPID_PARAM}=${Constant.BASE_API_KEY}"
+    }
+
+    override fun getHourlyForecast(
+        listener: OnResultListener<HourlyForcast>,
+        city: String,
+    ) {
+        val urlString =
+            "${Constant.BASE_URL}${Constant.HOURLY_FORECAST_ENDPOINT}?${Constant.QUERY_PARAM}=$city" +
+                "&${Constant.UNITS_PARAM}=${Constant.UNITS_VALUE}&${Constant.CNT_PARAM}=${Constant.FORECAST_HOUR}" +
+                "&${Constant.APPID_PARAM}=${Constant.BASE_API_KEY}"
     }
 
     companion object {

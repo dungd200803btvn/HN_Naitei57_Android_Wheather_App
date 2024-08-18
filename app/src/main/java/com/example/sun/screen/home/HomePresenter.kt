@@ -3,12 +3,12 @@ package com.example.sun.screen.home
 import android.os.Handler
 import android.os.Looper
 import com.example.sun.data.model.CurrentWeather
-import com.example.sun.data.repository.source.CurrentWeatherRepository
+import com.example.sun.data.repository.source.WeatherRepository
 import com.example.sun.data.repository.source.remote.OnResultListener
 import java.lang.Exception
 
 class HomePresenter(
-    private val weatherRepository: CurrentWeatherRepository,
+    private val weatherRepository: WeatherRepository,
 ) : HomeContract.Presenter {
     private var view: HomeContract.View? = null
     private val handler = Handler(Looper.getMainLooper())
@@ -57,5 +57,10 @@ class HomePresenter(
             latitude,
             longitude,
         )
+    }
+
+    override fun getSelectedLocation(key: String) {
+        val city = weatherRepository.getSelectedLocation(key)
+        getCurrentWeather(city)
     }
 }

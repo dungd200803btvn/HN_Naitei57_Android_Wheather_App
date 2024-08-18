@@ -27,6 +27,8 @@ data class Main(
     var currentTemperature: Double,
     @SerializedName("humidity")
     var humidity: Int,
+    @SerializedName("temp_min") var tempMin: Double,
+    @SerializedName("temp_max") var tempMax: Double,
 )
 
 data class Weather(
