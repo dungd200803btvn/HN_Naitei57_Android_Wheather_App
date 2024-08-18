@@ -2,9 +2,9 @@ package com.sun.weather.data.model
 
 import com.google.gson.annotations.SerializedName
 
-data class HourlyForcast(
+data class HourlyForecast(
     @SerializedName("cnt") val cnt: Int,
-    @SerializedName("list") val forecastList: List<HourlyForcastItem>,
+    @SerializedName("list") val forecastList: List<HourlyForecastItem>,
     @SerializedName("city") val city: City,
 )
 
@@ -15,7 +15,7 @@ data class City(
     @SerializedName("country") val country: String,
 )
 
-data class HourlyForcastItem(
+data class HourlyForecastItem(
     @SerializedName("dt") val dt: Long,
     @SerializedName("main") val main: Main,
     @SerializedName("weather") val weather: List<Weather>,

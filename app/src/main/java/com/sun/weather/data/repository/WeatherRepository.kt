@@ -2,7 +2,7 @@ package com.sun.weather.data.repository.source
 
 import com.sun.weather.data.model.CurrentWeather
 import com.sun.weather.data.model.FavouriteLocation
-import com.sun.weather.data.model.HourlyForcast
+import com.sun.weather.data.model.HourlyForecast
 import com.sun.weather.data.model.WeeklyForecast
 import com.sun.weather.data.repository.source.remote.OnResultListener
 
@@ -10,8 +10,30 @@ class WeatherRepository(
     private val remote: WeatherDataSource.Remote,
     private val local: WeatherDataSource.Local,
 ) : WeatherDataSource.Local, WeatherDataSource.Remote {
-    override fun getCurrentWeatherLocal(listener: OnResultListener<List<CurrentWeather>>) {
+    override fun getCurrentWeatherLocal(listener: OnResultListener<CurrentWeather>) {
         local.getCurrentWeatherLocal(listener)
+    }
+
+    override fun getWeeklyForecastLocal(
+        listener: OnResultListener<WeeklyForecast>,
+        city: String,
+    ) {
+        local.getWeeklyForecastLocal(listener, city)
+    }
+
+    override fun saveWeeklyForecastLocal(weeklyForecast: WeeklyForecast) {
+        local.saveWeeklyForecastLocal(weeklyForecast)
+    }
+
+    override fun getHourlyForecastLocal(
+        listener: OnResultListener<HourlyForecast>,
+        city: String,
+    ) {
+        local.getHourlyForecastLocal(listener, city)
+    }
+
+    override fun saveHourlyForecastLocal(hourlyForecast: HourlyForecast) {
+        local.saveHourlyForecastLocal(hourlyForecast)
     }
 
     override fun insertFavoriteWeather(favouriteLocation: FavouriteLocation) {
@@ -24,6 +46,10 @@ class WeatherRepository(
 
     override fun removeFavoriteItem(id: Long) {
         local.removeFavoriteItem(id)
+    }
+
+    override fun saveCurrentWeather(currentWeather: CurrentWeather) {
+        local.saveCurrentWeather(currentWeather)
     }
 
     override fun getCurrentWeather(
@@ -49,7 +75,7 @@ class WeatherRepository(
     }
 
     override fun getHourlyForecast(
-        listener: OnResultListener<HourlyForcast>,
+        listener: OnResultListener<HourlyForecast>,
         city: String,
     ) {
         remote.getHourlyForecast(listener, city)

@@ -8,7 +8,6 @@ import com.sun.weather.data.model.FavouriteLocation
 import com.sun.weather.data.repository.source.WeatherRepository
 import com.sun.weather.data.repository.source.remote.OnResultListener
 import com.sun.weather.utils.SharedPrefManager
-import java.lang.Exception
 
 class HomePresenter(
     private val weatherRepository: WeatherRepository,
@@ -25,6 +24,7 @@ class HomePresenter(
             object : OnResultListener<CurrentWeather> {
                 override fun onSuccess(data: CurrentWeather) {
                     handler.post {
+                        weatherRepository.saveCurrentWeather(data)
                         view?.onGetCurrentWeatherSuccess(data)
                     }
                 }
@@ -47,6 +47,7 @@ class HomePresenter(
             object : OnResultListener<CurrentWeather> {
                 override fun onSuccess(data: CurrentWeather) {
                     handler.post {
+                        weatherRepository.saveCurrentWeather(data)
                         view?.onGetCurrentLocationWeatherSuccess(data)
                     }
                 }
@@ -86,6 +87,24 @@ class HomePresenter(
             putString("description", currentWeather.weathers[0].description)
             putFloat("temperature", currentWeather.main.currentTemperature.toFloat())
         }
-        Log.d("LCD", "saveCurrentWeather: $currentWeather")
+    }
+
+    override fun loadDataFromLocal() {
+        weatherRepository.getCurrentWeatherLocal(
+            object : OnResultListener<CurrentWeather> {
+                override fun onSuccess(data: CurrentWeather) {
+                    handler.post {
+                        Log.d("LCD", "Loaded data from local: $data")
+                        view?.onGetCurrentWeatherSuccess(data)
+                    }
+                }
+
+                override fun onError(exception: Exception?) {
+                    handler.post {
+                        view?.onError(exception.toString())
+                    }
+                }
+            },
+        )
     }
 }

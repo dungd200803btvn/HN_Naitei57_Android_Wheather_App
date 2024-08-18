@@ -19,6 +19,8 @@ interface HomeContract {
         )
 
         fun saveCurrentWeather(currentWeather: CurrentWeather)
+
+        fun loadDataFromLocal()
     }
 
     interface View {
@@ -27,5 +29,7 @@ interface HomeContract {
         fun onGetCurrentLocationWeatherSuccess(currentWeather: CurrentWeather)
 
         fun onError(e: String)
+
+        fun onGetDataFromLocalSuccess(currentWeather: CurrentWeather)
     }
 }

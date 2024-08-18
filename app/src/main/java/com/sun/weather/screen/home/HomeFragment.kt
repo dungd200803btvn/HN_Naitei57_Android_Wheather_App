@@ -12,6 +12,7 @@ import com.sun.weather.databinding.FragmentHomeBinding
 import com.sun.weather.screen.detail.DetailFragment
 import com.sun.weather.screen.favourite.FavouriteFragment
 import com.sun.weather.screen.search.SearchFragment
+import com.sun.weather.utils.NetworkHelper
 import com.sun.weather.utils.RequestLocation.requestLocationAndFetchWeather
 import com.sun.weather.utils.base.BaseFragment
 import com.sun.weather.utils.ext.replaceFragment
@@ -19,6 +20,7 @@ import com.sun.weather.utils.ext.replaceFragment
 class HomeFragment : BaseFragment<FragmentHomeBinding>(), HomeContract.View {
     private lateinit var currentWeather: CurrentWeather
     private var cityName: String? = null
+    private var isNetworkAvailable = false
 
     override fun inflateViewBinding(inflater: LayoutInflater): FragmentHomeBinding {
         return FragmentHomeBinding.inflate(inflater)
@@ -34,9 +36,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), HomeContract.View {
             }
         homePresenter = repository?.let { HomePresenter(it) }
         homePresenter?.setView(this)
-        requestLocationAndFetchWeather(requireContext(), requireActivity(), homePresenter!!)
+        isNetworkAvailable = NetworkHelper.isNetworkAvailable(requireContext())
+        handleWeatherData()
         viewBinding.icLocation.setOnClickListener {
-            requestLocationAndFetchWeather(requireContext(), requireActivity(), homePresenter!!)
+            handleWeatherData()
         }
         viewBinding.tvLocation.setOnClickListener {
             replaceFragment(R.id.fragment_container, SearchFragment.newInstance(), true)
@@ -52,6 +55,14 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), HomeContract.View {
             val countryName = currentWeather.sys.country
             homePresenter?.saveFavoriteLocation(cityName!!, countryName)
             replaceFragment(R.id.fragment_container, FavouriteFragment.newInstance(), true)
+        }
+    }
+
+    private fun handleWeatherData() {
+        if (isNetworkAvailable) {
+            requestLocationAndFetchWeather(requireContext(), requireActivity(), homePresenter!!)
+        } else {
+            homePresenter?.loadDataFromLocal()
         }
     }
 
@@ -90,6 +101,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), HomeContract.View {
 
     override fun onError(e: String) {
         Log.d(MY_TAG, "onError: $e")
+    }
+
+    override fun onGetDataFromLocalSuccess(currentWeather: CurrentWeather) {
+        updateUIWithCurrentWeather(currentWeather)
     }
 
     override fun onDestroy() {

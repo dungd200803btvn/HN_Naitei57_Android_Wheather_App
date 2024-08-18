@@ -2,7 +2,7 @@ package com.sun.weather.data.repository.source
 
 import com.sun.weather.data.model.CurrentWeather
 import com.sun.weather.data.model.FavouriteLocation
-import com.sun.weather.data.model.HourlyForcast
+import com.sun.weather.data.model.HourlyForecast
 import com.sun.weather.data.model.WeeklyForecast
 import com.sun.weather.data.repository.source.remote.OnResultListener
 
@@ -10,7 +10,23 @@ interface WeatherDataSource {
     interface Local {
         fun getSelectedLocation(key: String): String
 
-        fun getCurrentWeatherLocal(listener: OnResultListener<List<CurrentWeather>>)
+        fun getCurrentWeatherLocal(listener: OnResultListener<CurrentWeather>)
+
+        fun saveCurrentWeather(currentWeather: CurrentWeather)
+
+        fun getWeeklyForecastLocal(
+            listener: OnResultListener<WeeklyForecast>,
+            city: String,
+        )
+
+        fun saveWeeklyForecastLocal(weeklyForecast: WeeklyForecast)
+
+        fun getHourlyForecastLocal(
+            listener: OnResultListener<HourlyForecast>,
+            city: String,
+        )
+
+        fun saveHourlyForecastLocal(hourlyForecast: HourlyForecast)
 
         fun insertFavoriteWeather(favouriteLocation: FavouriteLocation)
 
@@ -37,7 +53,7 @@ interface WeatherDataSource {
         )
 
         fun getHourlyForecast(
-            listener: OnResultListener<HourlyForcast>,
+            listener: OnResultListener<HourlyForecast>,
             city: String,
         )
     }

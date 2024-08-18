@@ -5,11 +5,11 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.sun.weather.data.model.HourlyForcastItem
+import com.sun.weather.data.model.HourlyForecastItem
 import com.sun.weather.databinding.ForecastHourlyBinding
 import java.util.Locale
 
-class HourlyAdapter(private var forecastList: List<HourlyForcastItem>) : RecyclerView.Adapter<HourlyAdapter.ViewHolder>() {
+class HourlyAdapter(private var forecastList: List<HourlyForecastItem>) : RecyclerView.Adapter<HourlyAdapter.ViewHolder>() {
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int,
@@ -30,7 +30,7 @@ class HourlyAdapter(private var forecastList: List<HourlyForcastItem>) : Recycle
     }
 
     inner class ViewHolder(private val binding: ForecastHourlyBinding) : RecyclerView.ViewHolder(binding.root) {
-        fun bindData(item: HourlyForcastItem) {
+        fun bindData(item: HourlyForecastItem) {
             val dateTimeString = item.dtTxt
             val originalFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
             val date = originalFormat.parse(dateTimeString)
@@ -44,7 +44,7 @@ class HourlyAdapter(private var forecastList: List<HourlyForcastItem>) : Recycle
         }
     }
 
-    fun updateData(list: List<HourlyForcastItem>) {
+    fun updateData(list: List<HourlyForecastItem>) {
         forecastList = list
         notifyDataSetChanged()
     }
