@@ -65,5 +65,5 @@
     <dimen name="dp_2">2dp</dimen>
     <dimen name="dp_92">92dp</dimen>
     <dimen name="dp_28">28dp</dimen>
-
+    <dimen name="sp_20">20sp</dimen>
 </resources>

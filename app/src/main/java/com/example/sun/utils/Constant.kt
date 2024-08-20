@@ -9,12 +9,17 @@ object Constant {
         get() = BuildConfig.BASE_API_KEY
     const val BASE_ICON_URL = "https://openweathermap.org/img/wn/"
     const val WEATHER_ENDPOINT = "weather"
+    const val WEEKLY_FORECAST_ENDPOINT = "forecast/daily"
+    const val HOURLY_FORECAST_ENDPOINT = "forecast/hourly"
     const val APPID_PARAM = "appid"
     const val UNITS_PARAM = "units"
     const val UNITS_VALUE = "metric"
     const val LAT_PARAM = "lat"
     const val LON_PARAM = "lon"
     const val QUERY_PARAM = "q"
+    const val CNT_PARAM = "cnt"
+    const val FORECAST_DAY = 7
+    const val FORECAST_HOUR = 24
 }
 object SharedPrefManager {
     private const val SHARE_PREFERENCES_NAME = "SHARE_PREFERENCES"

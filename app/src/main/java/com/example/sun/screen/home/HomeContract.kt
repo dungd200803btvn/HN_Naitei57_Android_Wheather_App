@@ -10,6 +10,8 @@ interface HomeContract {
             latitude: Double,
             longitude: Double,
         )
+
+        fun getSelectedLocation(key: String)
     }
 
     interface View {
