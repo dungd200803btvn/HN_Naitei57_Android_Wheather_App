@@ -15,6 +15,8 @@ data class WeeklyForecastItem(
     @SerializedName("weather") val weather: List<Weather>,
     @SerializedName("speed") val speed: Double,
     @SerializedName("clouds") val clouds: Int,
+    val day: String = "",
+    val iconWeather: String = "",
 )
 
 data class Temp(

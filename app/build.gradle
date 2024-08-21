@@ -37,20 +37,20 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+
     kotlinOptions {
         jvmTarget = '1.8'
     }
-    buildFeatures{
-        viewBinding = true
-    }
-    buildFeatures {
-        buildConfig = true
-    }
 
+    buildFeatures {
+        viewBinding = true
+        buildConfig=true
+    }
 }
 
 dependencies {
@@ -66,7 +66,6 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
     implementation 'com.google.code.gson:gson:2.8.8'
     implementation 'com.github.bumptech.glide:glide:4.16.0'
-    implementation("com.google.android.gms:play-services-maps:19.0.0")
-    implementation("com.google.android.gms:play-services-location:21.3.0")
-    implementation ("com.airbnb.android:lottie:3.4.0")
+    implementation 'com.google.android.gms:play-services-maps:19.0.0'
+    implementation 'com.airbnb.android:lottie:3.4.0'
 }

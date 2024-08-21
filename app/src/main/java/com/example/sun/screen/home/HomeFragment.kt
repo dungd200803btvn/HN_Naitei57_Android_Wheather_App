@@ -39,6 +39,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), HomeContract.View {
                 ),
             )
         homePresenter?.setView(this)
+        requestLocationAndFetchWeather()
         viewBinding.icLocation.setOnClickListener {
             requestLocationAndFetchWeather()
         }
@@ -86,6 +87,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), HomeContract.View {
     private fun updateUIWithCurrentWeather(currentWeather: CurrentWeather) {
         viewBinding.tvLocation.text =
             getString(R.string.city_name, currentWeather.nameCity, currentWeather.sys.country)
+        cityName = currentWeather.nameCity
         viewBinding.tvCurrentDay.text = currentWeather.day
         viewBinding.tvCurrentTemperature.text = currentWeather.main.currentTemperature.toString()
         if (currentWeather.weathers.isNotEmpty()) {

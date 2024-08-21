@@ -28,4 +28,12 @@
     <string name="forecast_detail">Forecast Detail:</string>
     <string name="back">Back</string>
     <string name="city_name">%1$s, %2$s</string>
+    <string name="forecast_temperature">Forecast Temperature</string>
+    <string name="_37_do_c">37o C</string>
+    <string name="ngay_thang">Day</string>
+    <string name="trang_thai">Status:</string>
+    <string name="city_name_app_bar" translatable="false">%1$s %2$s</string>
+    <string name="today">Today</string>
+    <string name="weekly_forecast">Weekly Forecast</string>
+
 </resources>

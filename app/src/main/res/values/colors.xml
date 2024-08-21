@@ -6,4 +6,8 @@
     <color name="purple_500">#ced9ed</color>
     <color name="bg_toolbar">#0000FF</color>
     <color name="bg_fragment">#0963db</color>
+    <color name="divider_color">#CCCCCC</color>
+    <color name="item_background_color">#FFFFFF</color>
+    <color name="item_border_color">#FF9800</color>
+    <color name="tv_day_color">#333333</color>
 </resources>

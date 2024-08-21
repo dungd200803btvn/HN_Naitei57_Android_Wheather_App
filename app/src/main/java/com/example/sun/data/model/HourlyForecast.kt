@@ -22,4 +22,5 @@ data class HourlyForcastItem(
     @SerializedName("clouds") val clouds: Clouds,
     @SerializedName("wind") val wind: Wind,
     @SerializedName("dt_txt") val dtTxt: String,
+    val iconWeather: String = "",
 )
